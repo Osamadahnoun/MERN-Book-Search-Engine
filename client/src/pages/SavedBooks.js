@@ -1,5 +1,4 @@
 import React from "react";
-import { useMutation, useQuery } from "@apollo/client";
 import {
   Jumbotron,
   Container,
@@ -7,10 +6,12 @@ import {
   Card,
   Button,
 } from "react-bootstrap";
+
+import { useQuery, useMutation } from "@apollo/client";
+import { GET_ME } from "../utils/queries";
+import { REMOVE_BOOK } from "../utils/mutations";
 import Auth from "../utils/auth";
 import { removeBookId } from "../utils/localStorage";
-import { REMOVE_BOOK } from "../utils/mutations";
-import { GET_ME } from "../utils/queries";
 
 const SavedBooks = () => {
   const { loading, data } = useQuery(GET_ME);
@@ -57,7 +58,6 @@ const SavedBooks = () => {
       console.error(err);
     }
   };
-
   // if data isn't here yet, say so
   if (loading) {
     return <h2>LOADING...</h2>;

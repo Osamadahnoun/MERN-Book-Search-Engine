@@ -25,6 +25,9 @@ const SearchBooks = () => {
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
+  // define the save book function from the mutation
+  const [saveBook] = useMutation(SAVE_BOOK);
+
   // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
   // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
   useEffect(() => {
@@ -53,6 +56,7 @@ const SearchBooks = () => {
         authors: book.volumeInfo.authors || ["No author to display"],
         title: book.volumeInfo.title,
         description: book.volumeInfo.description,
+        link: book.volumeInfo.infoLink,
         image: book.volumeInfo.imageLinks?.thumbnail || "",
       }));
 
@@ -63,7 +67,6 @@ const SearchBooks = () => {
     }
   };
 
-  const [saveBook] = useMutation(SAVE_BOOK);
   // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
     // find the book in `searchedBooks` state by the matching id
@@ -77,16 +80,19 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await saveBook({
+      await saveBook({
         variables: { book: bookToSave },
         update: (cache) => {
           const { me } = cache.readQuery({ query: GET_ME });
+          // console.log(me)
+          // console.log(me.savedBooks)
           cache.writeQuery({
             query: GET_ME,
             data: { me: { ...me, savedBooks: [...me.savedBooks, bookToSave] } },
           });
         },
       });
+
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
@@ -153,7 +159,7 @@ const SearchBooks = () => {
                       {savedBookIds?.some(
                         (savedBookId) => savedBookId === book.bookId
                       )
-                        ? "This book has already been saved!"
+                        ? "This book has been saved!"
                         : "Save this Book!"}
                     </Button>
                   )}

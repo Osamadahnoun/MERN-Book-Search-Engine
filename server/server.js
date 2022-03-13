@@ -5,8 +5,8 @@ const { authMiddleware } = require("./utils/auth");
 const db = require("./config/connection");
 const { typeDefs, resolvers } = require("./schemas");
 
-const app = express();
 const PORT = process.env.PORT || 3001;
+const app = express();
 
 const startServer = async () => {
   // create a new Apollo server and pass in our schema data
@@ -27,7 +27,7 @@ const startServer = async () => {
 };
 startServer();
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Serve up static assets
